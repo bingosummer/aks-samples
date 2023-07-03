@@ -76,4 +76,4 @@ resource myAKS 'Microsoft.ContainerService/managedClusters@2023-03-01' = {
 }
 
 output clusterName string = myAKS.name
-output diskEncryptionSetName = diskEncryptionSets.name
+output diskEncryptionSetName string = diskEncryptionSets.name
