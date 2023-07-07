@@ -8,7 +8,7 @@ param location string = resourceGroup().location
 
 var resourceName = '${prefix}${uniqueString(resourceGroup().id)}'
 
-module akv '../../common/akv.bicep' = {
+module akv 'akv.bicep' = {
   name: 'akv'
   params: {
     keyVaultName: resourceName
@@ -16,7 +16,7 @@ module akv '../../common/akv.bicep' = {
   }
 }
 
-module key '../../common/akv/key.bicep' = {
+module key './akv/key.bicep' = {
   name: 'key'
   params: {
     keyVaultName: akv.outputs.akvName
@@ -40,22 +40,22 @@ resource diskEncryptionSets 'Microsoft.Compute/diskEncryptionSets@2022-07-02' = 
   }
 }
 
-module diskSetIdentityAccessKeyVault '../../common/akv/accesspolicy.bicep' = {
-    name: 'diskSetIdentityAccessKeyVault'
-    params: {
-        keyVaultName: akv.outputs.akvName
-        objectId: diskEncryptionSets.identity.principalId
-        permissions: {
-          keys: [
-            'get','wrapKey','unwrapKey'
-          ]
-        }
+module diskSetIdentityAccessKeyVault './akv/accesspolicy.bicep' = {
+  name: 'diskSetIdentityAccessKeyVault'
+  params: {
+    keyVaultName: akv.outputs.akvName
+    objectId: diskEncryptionSets.identity.principalId
+    permissions: {
+      keys: [
+        'get', 'wrapKey', 'unwrapKey'
+      ]
     }
+  }
 }
 
 resource myAKS 'Microsoft.ContainerService/managedClusters@2023-03-01' = {
   name: '${prefix}${uniqueString(resourceGroup().id)}'
-  location: location 
+  location: location
   identity: {
     type: 'SystemAssigned'
   }
