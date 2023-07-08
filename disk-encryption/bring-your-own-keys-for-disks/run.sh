@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -e
 set -x
 
 prefix="$1"
