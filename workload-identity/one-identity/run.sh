@@ -8,7 +8,7 @@ resourceGroupName="$prefix"
 deploymentName="$prefix"
 
 az group create --name $resourceGroupName --location "westus2"
-
+echo "test"
 az deployment group create \
   --name $deploymentName \
   --resource-group $resourceGroupName \
