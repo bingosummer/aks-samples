@@ -3,11 +3,6 @@ on:
   pull_request:
     branches:
     - master
-env:
-  ARM_CLIENT_ID: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }}
-  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 jobs:
   changes:
     runs-on: ubuntu-latest
@@ -130,6 +125,11 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.security-features == 'true' }}
     runs-on: ubuntu-latest
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     steps:
     - name: Checkout
       uses: actions/checkout@v3
