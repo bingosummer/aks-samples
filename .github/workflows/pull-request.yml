@@ -120,19 +120,20 @@ jobs:
           chmod +x ./run.sh
           ./run.sh $prefix
         popd
+
         az group delete -n $prefix --yes --no-wait
-  security-features-terraform:
-    needs: changes
-    if: ${{ needs.changes.outputs.security-features == 'true' }}
-    runs-on: ubuntu-latest
-    env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
+  # security-features-terraform:
+  #   needs: changes
+  #   if: ${{ needs.changes.outputs.security-features == 'true' }}
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     ARM_CLIENT_ID: ${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
+  #     ARM_CLIENT_SECRET: ${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }}
+  #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  #   steps:
+  #   - name: Checkout
+  #     uses: actions/checkout@v3
 
     # - name: Check secrets
     #   run: |
@@ -145,35 +146,35 @@ jobs:
     #     echo ${{ secrets.AZURE_TENANT_ID }}
     #     echo ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Setup terraform
-      uses: hashicorp/setup-terraform@v2
-
-    - name: Terraform init 
-      working-directory: ./security-features/terraform
-      run: terraform init -upgrade
-
-    - name: Terraform plan
-      working-directory: ./security-features/terraform
-      run: |
-        export ARM_CLIENT_ID=${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
-        export ARM_CLIENT_SECRET=${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }}
-        export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
-        export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        echo $ARM_CLIENT_ID
-        echo $ARM_CLIENT_SECRET
-        echo $ARM_TENANT_ID
-        echo $ARM_SUBSCRIPTION_ID
-        terraform plan -out main.tfplan
-      continue-on-error: false
-
-    - name: Terraform apply Plan
-      working-directory: ./security-features/terraform
-      run: terraform apply main.tfplan 
-
-    - name: Terraform output
-      working-directory: ./security-features/terraform
-      run: terraform output 
-
-    - name: Cleanup resources
-      working-directory: ./security-features/terraform
-      run: terraform destroy --auto-approve 
+    # - name: Setup terraform
+    #   uses: hashicorp/setup-terraform@v2
+    #
+    # - name: Terraform init 
+    #   working-directory: ./security-features/terraform
+    #   run: terraform init -upgrade
+    #
+    # - name: Terraform plan
+    #   working-directory: ./security-features/terraform
+    #   run: |
+    #     export ARM_CLIENT_ID=${{ secrets.AZURE_SERVICE_PRINCIPAL_ID }}
+    #     export ARM_CLIENT_SECRET=${{ secrets.AZURE_SERVICE_PRINCIPAL_PASSWORD }}
+    #     export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+    #     export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    #     echo $ARM_CLIENT_ID
+    #     echo $ARM_CLIENT_SECRET
+    #     echo $ARM_TENANT_ID
+    #     echo $ARM_SUBSCRIPTION_ID
+    #     terraform plan -out main.tfplan
+    #   continue-on-error: false
+    #
+    # - name: Terraform apply Plan
+    #   working-directory: ./security-features/terraform
+    #   run: terraform apply main.tfplan 
+    #
+    # - name: Terraform output
+    #   working-directory: ./security-features/terraform
+    #   run: terraform output 
+    #
+    # - name: Cleanup resources
+    #   working-directory: ./security-features/terraform
+    #   run: terraform destroy --auto-approve 
